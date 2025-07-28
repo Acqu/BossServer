@@ -1,23 +1,12 @@
-# Stage 1: Build the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /src
-
-# Copy everything and restore dependencies
-COPY . ./
-RUN dotnet restore
-
-# Publish the app to /app/publish
-RUN dotnet publish -c Release -o /app/publish
-
-# Stage 2: Run the application
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+# Use the official ASP.NET Core runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 
-# Copy published output from build stage
-COPY --from=build /app/publish .
+# Copy published output from the repository root
+COPY . .
 
 # Expose port 80
 EXPOSE 80
 
-# Run the app
+# Run the application
 ENTRYPOINT ["dotnet", "BossServer.dll"]
